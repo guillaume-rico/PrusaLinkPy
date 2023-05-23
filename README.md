@@ -272,14 +272,10 @@ GET/POST /api/download
 
 # Change Log 
 
-0.1.0 :
+1.0.0 :
 
  - First Release
 
-0.1.1 :
-
- - get_files : Bug correction in default dir
- - rm : add rm function
 
 # Inspiration
 

@@ -1,6 +1,6 @@
 [project]
 name = "PrusaLinkPy"
-version = "1.0.0"
+version = "1.0.1"
 authors = [
   { name="Guillaume RICO", email="guillaume.rico@alpesmesures.fr" },
 ]
@@ -15,6 +15,6 @@ classifiers = [
 license = {file = "LICENSE"}
 keywords = ["Prusalink", "API", "Mini"]
 [project.urls]
-"Homepage" = "https://github.com/guillaume-rico/prusaLink"
-"Bug Tracker" = "https://github.com/guillaume-rico/prusaLink/issues"
-"repository" = "https://github.com/guillaume-rico/prusaLink.git"
+"Homepage" = "https://github.com/guillaume-rico/PrusaLinkPy"
+"Bug Tracker" = "https://github.com/guillaume-rico/PrusaLinkPy/issues"
+"repository" = "https://github.com/guillaume-rico/PrusaLinkPy.git"

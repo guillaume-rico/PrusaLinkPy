@@ -48,7 +48,7 @@ PrusaLinkPy officially supports Python 3.9+.
 
 ## Low Level Functions
 
-get_version()
+[get_version()](https://github.com/guillaume-rico/PrusaLinkPy#prusalinkpyget_version---read-version-)
 
 get_printer()
 

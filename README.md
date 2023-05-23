@@ -50,17 +50,17 @@ PrusaLinkPy officially supports Python 3.9+.
 
 [get_version()](https://github.com/guillaume-rico/PrusaLinkPy#prusalinkpyget_version---read-version-)
 
-get_printer()
+[get_printer()](https://github.com/guillaume-rico/PrusaLinkPy#prusalinkpyget_printer---get-printer-)
 
-get_job()
+[get_job()](https://github.com/guillaume-rico/PrusaLinkPy#prusalinkpyget_job---get-job-)
 
-get_files(remoteDir)
+[get_files(remoteDir)](https://github.com/guillaume-rico/PrusaLinkPy#prusalinkpyget_files-remotedir------get-files-on-usb-drive-)
 
-delete_gcode(remotePath)
+[delete_gcode(remotePath)](https://github.com/guillaume-rico/PrusaLinkPy#prusalinkpydelete_gcoderemotepath---delete-a-file-on-usb-drive)
 
-post_gcode(path)
+[post_gcode(path)](https://github.com/guillaume-rico/PrusaLinkPy#prusalinkpypost_gcodefilepathlocal---send-gcode)
 
-post_print_gcode(remotePath)
+[post_print_gcode(remotePath)](https://github.com/guillaume-rico/PrusaLinkPy#prusalinkpypost_print_gcoderemotepath---print-gcode-on-usb-drive)
 
 
 ## High Level Functions 

@@ -32,6 +32,9 @@ Example of use :
     prusaMini.post_print_gcode('/usb/test.gcode')
     
 
+The library changed its name in May 2025. Before it was called prusaLink.
+Prusa staff asked me to leave them the name.
+
 # Installing PrusaLinkPy and Supported Versions
 
 PrusaLinkPy is available on pip :
@@ -76,7 +79,7 @@ Function to add to the library:
 
 # User Guide
 
-## get_version() - Read version :
+## PrusaLinkPy.get_version() - Read version :
 
 
     import PrusaLinkPy
@@ -89,7 +92,7 @@ Return something like :
     {'api': '2.0.0', 'server': '2.1.2', 'text': 'PrusaLinkPy MINI', 'hostname': 'PMINI3'}
 
 
-## get_printer() - Get printer :
+## PrusaLinkPy.get_printer() - Get printer :
 
     import PrusaLinkPy
     prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
@@ -131,7 +134,7 @@ Return something like :
         }
     }
 
-## get_job() - Get job :
+## PrusaLinkPy.get_job() - Get job :
 
     import PrusaLinkPy
     prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
@@ -147,7 +150,7 @@ Return something like :
     }
     
     
-## get_files() - Get Files on USB Drive :
+## PrusaLinkPy.get_files( remoteDir = '/' ) - Get Files on USB Drive :
 
 Warning : Return onlys files ! Not folder !
 
@@ -196,7 +199,7 @@ Workalso with subfolder
 
     obj = prusaMini.get_files(remoteDir = '/USB/SUBFOLDER/')
 
-## delete_gcode(remotePath) - Delete a file on USB drive
+## PrusaLinkPy.delete_gcode(remotePath) - Delete a file on USB drive
 
     import PrusaLinkPy
     prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
@@ -204,7 +207,7 @@ Workalso with subfolder
 
 Not tested in folder
 
-## post_gcode(path) - Send GCODE 
+## PrusaLinkPy.post_gcode(filePathLocal) - Send GCODE 
 
     import PrusaLinkPy
     prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
@@ -229,7 +232,7 @@ Return something like :
 Speed transfer (By Ethernet) :
 83s for 4.5Mo -> 54ko/s 
 
-## post_print_gcode - Print GCODE on USB Drive 
+## PrusaLinkPy.post_print_gcode(remotePath) - Print GCODE on USB Drive 
 
 Warning : Printer LCD must be on main screen !
 

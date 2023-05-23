@@ -1,0 +1,20 @@
+[project]
+name = "PrusaLinkPy"
+version = "1.0.0"
+authors = [
+  { name="Guillaume RICO", email="guillaume.rico@alpesmesures.fr" },
+]
+description = "A library to interface with the PrusaLink API"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+license = {file = "LICENSE"}
+keywords = ["Prusalink", "API", "Mini"]
+[project.urls]
+"Homepage" = "https://github.com/guillaume-rico/prusaLink"
+"Bug Tracker" = "https://github.com/guillaume-rico/prusaLink/issues"
+"repository" = "https://github.com/guillaume-rico/prusaLink.git"

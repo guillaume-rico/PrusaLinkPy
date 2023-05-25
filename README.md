@@ -35,13 +35,28 @@ Example of use :
 The library changed its name in May 2025. Before it was called prusaLink.
 Prusa staff asked me to leave them the name.
 
+#  Bugs present in Prusa MINI printer firmware 4.4.1:
+
+ * There is no possibility to have the list of folders present in a directory
+ * You cannot upload a gcode in a subfolder of the USB key
+ * When the printer detects the end of the filament and it displays "Change Filament" the telemetry information is no longer good. Here is the information returned by the printer in this case:
+ 
+    'telemetry': {'temp-bed': 0.0, 'temp-nozzle': 0.0, 'print-speed': 100, 'z-height': 0.0, 'material': '---'}
+    
+ * Still in the case of a filament change, the status information is incorrect:
+
+    'state': {'text': 'Operational', 'flags': {'operational': True, 'paused': False, 'printing': False, 'cancelling': False, 'pausing': False, 'sdReady': False, 'error': False, 'closedOnError': False, 'ready': True, 'busy': False}
+
+
+  
+
 # Installing PrusaLinkPy and Supported Versions
 
 PrusaLinkPy is available on pip :
 
     python -m pip install PrusaLinkPy
 
-PrusaLinkPy officially supports Python 3.9+.
+PrusaLinkPy officially supports Python 3.9+ with Prusa MINI printer firmware 4.4.1.
 
 
 # API Reference

@@ -23,17 +23,35 @@ Example of use :
     prusaMini.rm()
     
     # Transferring a file to the printer
-    prusaMini.post_gcode('C:/AM/test.gcode')
+    if not prusaMini.exists_gcode('FOLDER/test.gcode') :
+        prusaMini.put_gcode('C:/AM/test.gcode', 'FOLDER/test.gcode')
     
-    # List files on USB Drive (root dir) :
-    prusaMini.get_files('/').json()['files'][0]['children']
+    # List files on USB Drive :
+    prusaMini.get_v1_files().json()["children"]
     
     # Print this file 
     prusaMini.post_print_gcode('/usb/test.gcode')
     
 
-The library changed its name in May 2025. Before it was called prusaLink.
+The library changed its name in May 2024. Before it was called prusaLink.
 Prusa staff asked me to leave them the name.
+
+# Change Log 
+
+1.0.0 :
+
+ - First Release
+ 
+ 
+2.0.0 :
+
+ - Support firmware 5.1.0
+ - Added : 
+
+ * get_v1_files
+ * put_gcode
+ * exists_gcode
+ 
 
 #  Bugs present in Prusa MINI printer firmware 4.4.1:
 
@@ -48,15 +66,13 @@ Prusa staff asked me to leave them the name.
     'state': {'text': 'Operational', 'flags': {'operational': True, 'paused': False, 'printing': False, 'cancelling': False, 'pausing': False, 'sdReady': False, 'error': False, 'closedOnError': False, 'ready': True, 'busy': False}
 
 
-  
-
 # Installing PrusaLinkPy and Supported Versions
 
 PrusaLinkPy is available on pip :
 
     python -m pip install PrusaLinkPy
 
-PrusaLinkPy officially supports Python 3.9+ with Prusa MINI printer firmware 4.4.1.
+PrusaLinkPy officially supports Python 3.9+ with Prusa MINI printer firmware 5.1.0.
 
 
 # API Reference
@@ -72,8 +88,6 @@ PrusaLinkPy officially supports Python 3.9+ with Prusa MINI printer firmware 4.4
 [get_files(remoteDir)](https://github.com/guillaume-rico/PrusaLinkPy#prusalinkpyget_files-remotedir------get-files-on-usb-drive-)
 
 [delete_gcode(remotePath)](https://github.com/guillaume-rico/PrusaLinkPy#prusalinkpydelete_gcoderemotepath---delete-a-file-on-usb-drive)
-
-[post_gcode(path)](https://github.com/guillaume-rico/PrusaLinkPy#prusalinkpypost_gcodefilepathlocal---send-gcode)
 
 [post_print_gcode(remotePath)](https://github.com/guillaume-rico/PrusaLinkPy#prusalinkpypost_print_gcoderemotepath---print-gcode-on-usb-drive)
 
@@ -222,7 +236,7 @@ Workalso with subfolder
 
 Not tested in folder
 
-## PrusaLinkPy.post_gcode(filePathLocal) - Send GCODE 
+## Deprecated - PrusaLinkPy.post_gcode(filePathLocal) - Send GCODE 
 
     import PrusaLinkPy
     prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
@@ -285,11 +299,6 @@ POST /api/job
 GET/POST /api/download 
 **[Link to Buddy code](https://github.com/prusa3d/Prusa-Firmware-Buddy/blob/master/lib/WUI/link_content/prusa_link_api.cpp#L289)**
 
-# Change Log 
-
-1.0.0 :
-
- - First Release
 
 
 # Inspiration

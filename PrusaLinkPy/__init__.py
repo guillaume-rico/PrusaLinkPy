@@ -40,10 +40,26 @@ class PrusaLinkPy:
         files = prusaMini.get_files().json()
         
         r = requests.get('http://192.168.1.211/api/files', headers=headers)
-        
         """
+        print("get_files is depreciated. Use get_v1_files")
         # was : r = requests.get('http://' + self.host + ':' + self.port + '/api/files?recursive=true', headers=self.headers)
         r = requests.get('http://' + self.host + ':' + self.port + '/api/files' + remoteDir, headers=self.headers)
+        return r
+        
+        
+    def get_v1_files(self, remoteDir = '/') :
+        """
+        List files and folder on USB Drive.
+        
+        Test code :
+        import PrusaLinkPy
+        prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.1.211", "44Da9wHhThmzFFJ")
+        files = prusaMini.get_v1_files().json()
+        
+        r = requests.get('http://192.168.1.211/api/v1/files/usb/', headers=headers)
+        """
+        # was : r = requests.get('http://' + self.host + ':' + self.port + '/api/files?recursive=true', headers=self.headers)
+        r = requests.get('http://' + self.host + ':' + self.port + '/api/v1/files/usb' + remoteDir, headers=self.headers)
         return r
         
     def post_gcode(self, filePathLocal) :
@@ -60,9 +76,52 @@ class PrusaLinkPy:
         """
         fileContentBinary = {'file': open(filePathLocal,'rb')}
         # Marche aussi avec 
-        #r = requests.post('http://' + self.host + ':' + self.port + '/api/files/usb/', headers=self.headers, files=fileContentBinary )
-        r = requests.post('http://' + self.host + ':' + self.port + '/api/files/local/', headers=self.headers, files=fileContentBinary )
+        #r = requests.post('http://' + self.host + ':' + self.port + '/api/files/local/', headers=self.headers, files=fileContentBinary )
+        r = requests.post('http://' + self.host + ':' + self.port + '/api/files/usb/', headers=self.headers, files=fileContentBinary )
         return r
+        
+    def put_gcode(self, filePathLocal, remoteDir) :
+        """
+        Send a file on USB Drive.
+        Can create a folder !
+        
+        if ret.status_code = 409 -> Conflict : File already exists
+        
+        Test code :
+        import PrusaLinkPy
+        prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.1.211", "44Da9wHhThmzFFJ")
+        files = prusaMini.put('C:/SLF/Perso/brio/_exportUSB/MTN/DEBOUCHAGE.gcode' , 'MTN/DEBOUCHAGE.gcode')
+        
+        """
+        if "bgcode" in filePathLocal :
+            fileContentBinary = {'file': open(filePathLocal,'rb')}
+        else :
+            fileContentBinary = {'file': open(filePathLocal,'r')}
+            
+        r = requests.put('http://' + self.host + ':' + self.port + '/api/v1/files/usb/' + remoteDir, headers=self.headers, data=fileContentBinary )
+        return r
+        
+    def exists_gcode(self, remoteDir) :
+        """
+        test if file exists.
+        If exists :
+            ret.status_code = 200
+        if not 
+            ret.status_code = 404
+            
+        Test code :
+        import PrusaLinkPy
+        prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.1.211", "44Da9wHhThmzFFJ")
+        fileExist = prusaMini.exists_gcode('MTN/DEBOUCHAGE.gcode')
+        
+        
+        """
+        r = requests.head('http://' + self.host + ':' + self.port + '/api/v1/files/usb/' + remoteDir, headers=self.headers )
+        
+        if r.status_code == 200 :
+            return True
+        else :
+            return False
         
     def post_print_gcode(self, remotePath) :
         """

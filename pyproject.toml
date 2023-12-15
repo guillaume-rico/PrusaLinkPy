@@ -1,6 +1,6 @@
 [project]
 name = "PrusaLinkPy"
-version = "2.0.1"
+version = "2.1.0"
 authors = [
   { name="Guillaume RICO", email="guillaume.rico@alpesmesures.fr" },
 ]

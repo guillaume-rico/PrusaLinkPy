@@ -27,7 +27,7 @@ Example of use :
         prusaMini.put_gcode('C:/AM/test.gcode', 'FOLDER/test.gcode')
     
     # List files on USB Drive :
-    prusaMini.get_v1_files().json()["children"]
+    prusaMini.get_files().json()["children"]
     
     # Print this file 
     prusaMini.post_print_gcode('/usb/test.gcode')
@@ -38,44 +38,32 @@ Prusa staff asked me to leave them the name.
 
 # Change Log 
 
-1.0.0 :
+## 2.1.0 :
 
- - First Release
+ - Update README.md
+ - added :
+
+ * delete
+ * get_status
+ * get_storage
+ * delete_job
  
+## 2.0.1 :
+
+ - Bug correction on put_gcode
  
-2.0.0 :
+## 2.0.0 :
 
  - Support firmware 5.1.0
  - Added : 
 
- * get_v1_files
+ * get_files
  * put_gcode
  * exists_gcode
  
-2.0.1 :
+## 1.0.0 :
 
- - Bug correction on put_gcode
- 
-2.0.1 :
-
- - added :
-
- * delete
-
-#  Bugs present in Prusa MINI printer firmware 4.4.1:
-
- * There is no possibility to have the list of folders present in a directory
-    * Solved in firmware 5
- * You cannot upload a gcode in a subfolder of the USB key
-    * Solved in firmware 5
- * When the printer detects the end of the filament and it displays "Change Filament" the telemetry information is no longer good. Here is the information returned by the printer in this case:
- 
-    'telemetry': {'temp-bed': 0.0, 'temp-nozzle': 0.0, 'print-speed': 100, 'z-height': 0.0, 'material': '---'}
-    
- * Still in the case of a filament change, the status information is incorrect:
-
-    'state': {'text': 'Operational', 'flags': {'operational': True, 'paused': False, 'printing': False, 'cancelling': False, 'pausing': False, 'sdReady': False, 'error': False, 'closedOnError': False, 'ready': True, 'busy': False}
-
+ - First Release
 
 # Installing PrusaLinkPy and Supported Versions
 
@@ -90,37 +78,33 @@ PrusaLinkPy officially supports Python 3.9+ with Prusa MINI printer firmware 5.1
 
 ## Low Level Functions
 
-[get_version()](https://github.com/guillaume-rico/PrusaLinkPy#prusalinkpyget_version---read-version-)
+[get_version()](#prusalinkpyget_version)
 
-[get_printer()](https://github.com/guillaume-rico/PrusaLinkPy#prusalinkpyget_printer---get-printer-)
+[get_printer()](#prusalinkpyget_printer)
 
-[get_job()](https://github.com/guillaume-rico/PrusaLinkPy#prusalinkpyget_job---get-job-)
+[get_job()](#prusalinkpyget_job)
 
-[get_v1_files(remoteDir)]()
+[delete_job()](#prusalinkpydelete_job)
 
-[get_recursive_v1_files(remoteDir)]()
+[get_status()](#prusalinkpyget_status)
 
-[delete(remotePath)]()
+[get_storage()](#prusalinkpyget_storage)
 
-[put_gcode(filePathLocal, remoteDir)]()
+[get_files(remoteDir)](#prusalinkpyget_files-remotedir--)
 
-[exists_gcode(remotePath)]()
+[delete(remotePath)](#prusalinkpydeleteremotepath)
 
-[post_print_gcode(remotePath)](https://github.com/guillaume-rico/PrusaLinkPy#prusalinkpypost_print_gcoderemotepath---print-gcode-on-usb-drive)
+[post_gcode(filePathLocal, remoteDir)](#prusalinkpyput_post_gcode)
 
+[put_gcode(filePathLocal, remoteDir, printAfterUpload = False, overwrite = False)](#prusalinkpyput_gcoderemotepath)
+
+[post_gcode(filePathLocal, remoteDir)](#prusalinkpyput_post_gcode)
+
+[exists_gcode(remotePath)](#prusalinkpyexists_gcoderemotepath)
 
 ## High Level Functions 
 
-rm(remotePath) 
-
-rm is used to delete all files in a folder :
-
-    prusaMini.rm()
-
-Function to add to the library:
-
- - Function to send then print
- - Synchronizing a local folder to the printer
+[get_recursive_files(remoteDir)](#prusalinkpyget_recursive_files-remotedir--)
 
 
 # User Guide
@@ -137,7 +121,17 @@ Read version :
     
 Return something like :
 
-    {'api': '2.0.0', 'server': '2.1.2', 'nozzle_diameter': 0.4, 'text': 'PrusaLink', 'hostname': '', 'capabilities': {'upload-by-put': True}}
+    {
+        'api': '2.0.0', 
+        'server': '2.1.2', 
+        'nozzle_diameter': 0.4, 
+        'text': 'PrusaLink', 
+        'hostname': '', 
+        'capabilities': 
+        {
+            'upload-by-put': True
+        }
+    }
 
 
 ## PrusaLinkPy.get_printer()
@@ -151,7 +145,8 @@ Get printer :
     
 Return something like :
 
-    {'telemetry': 
+    {
+        'telemetry': 
         {
             'temp-bed': 16.3,
             'temp-nozzle': 16.7,
@@ -160,38 +155,38 @@ Return something like :
             'material': 'PLA'
         }, 
         'temperature': 
+        {
+            'tool0': 
             {
-                'tool0': 
-                    {
-                        'actual': 16.7,
-                        'target': 0.0,
-                        'display': 0.0,
-                        'offset': 0
-                    },
-                'bed': 
-                    {
-                        'actual':16.3,
-                        'target': 0.0,
-                        'offset': 0
-                    }
+                'actual': 16.7,
+                'target': 0.0,
+                'display': 0.0,
+                'offset': 0
             },
-        'state': 
+            'bed': 
             {
-                'text': 'Operational',
-                'flags': 
-                    {
-                        'operational': True,
-                        'paused': False,
-                        'printing': False,
-                        'cancelling': False,
-                        'pausing': False,
-                        'error': False,
-                        'sdReady': False,
-                        'closedOnError': False,
-                        'ready': True,
-                        'busy': False
-                    }
+                'actual':16.3,
+                'target': 0.0,
+                'offset': 0
             }
+        },
+        'state': 
+        {
+            'text': 'Operational',
+            'flags': 
+            {
+                'operational': True,
+                'paused': False,
+                'printing': False,
+                'cancelling': False,
+                'pausing': False,
+                'error': False,
+                'sdReady': False,
+                'closedOnError': False,
+                'ready': True,
+                'busy': False
+            }
+        }
     }
 
 ## PrusaLinkPy.get_job()
@@ -211,14 +206,75 @@ Return something like :
         "progress": None
     }
     
+## PrusaLinkPy.delete_job(job)
+
+Delete a job. Job number is available with get_job() or get_status()
+
+    import PrusaLinkPy
+    prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
+    obj = prusaMini.delete_job("43")
     
-## PrusaLinkPy.get_v1_files( remoteDir = '/')
+
+## PrusaLinkPy.get_status()
+
+Get job :
+
+    import PrusaLinkPy
+    prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
+    obj = prusaMini.get_status()
+    obj.json()
+    
+Return something like :
+
+    {
+        "job":
+        {
+            "id":43,
+            "progress":0.00,
+            "time_remaining":120,
+            "time_printing":143
+        },
+        "storage":
+        {
+            "path":"/usb/",
+            "name":"usb",
+            "read_only":false
+        },
+        "printer":
+        {
+            "state":"PRINTING",
+            "temp_bed":57.3,
+            "target_bed":0.0,
+            "temp_nozzle":24.1,
+            "target_nozzle":0.0,
+            "axis_z":162.2,
+            "flow":100,
+            "speed":100,
+            "fan_hotend":0,
+            "fan_print":0
+        }
+    }
+    
+## PrusaLinkPy.get_storage()
+
+Get job :
+
+    import PrusaLinkPy
+    prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
+    obj = prusaMini.get_storage()
+    obj.json()
+    
+Return something like :
+
+    TODO
+
+## PrusaLinkPy.get_files( remoteDir = '/')
 
 Get Files on USB Drive :
 
     import PrusaLinkPy
     prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
-    obj = prusaMini.get_v1_files()
+    obj = prusaMini.get_files()
     filesRet = obj.json()
     
 Return something like :
@@ -228,36 +284,38 @@ Return something like :
         'ro': False, 
         'name': 'usb', 
         'children': 
-            [
-                {
-                    'name': 'MTN', 
-                    'ro': False, 
-                    'type': 'FOLDER', 
-                    'm_timestamp': 1702628945, 
-                    'display_name': 'MTN'
-                },
-                {
-                    'name': 'S2_V2IS', 
-                    'ro': False, 
-                    'type': 'FOLDER', 
-                    'm_timestamp': 1702565182, 
-                    'display_name': 'S2_V2IS'
-                }
-            ]
+        [
+        {
+            'name': 'MTN', 
+            'ro': False, 
+            'type': 'FOLDER', 
+            'm_timestamp': 1702628945, 
+            'display_name': 'MTN'
+        },
+        {
+            'name': 'S2_V2IS', 
+            'ro': False, 
+            'type': 'FOLDER', 
+            'm_timestamp': 1702565182, 
+            'display_name': 'S2_V2IS'
+        }
+        ]
     }
     
 Workalso with subfolder
 
-    obj = prusaMini.get_v1_files(remoteDir = '/SUBFOLDER')
+    obj = prusaMini.get_files(remoteDir = '/SUBFOLDER')
 
-## PrusaLinkPy.get_recursive_v1_files( remoteDir = '/')
+## PrusaLinkPy.get_recursive_files( remoteDir = '/')
 
 Get all files in a folder and subfolder.
+
 Warning : return nested dict.
+
 
     import PrusaLinkPy
     prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
-    dictt = prusaMini.get_recursive_v1_files()
+    dictt = prusaMini.get_recursive_files()
     
     {
         'MTN': 
@@ -282,43 +340,44 @@ Delete a file or a folder on USB drive
     obj = prusaMini.delete('/DEBOUC~1.GCO')
 
 
-## PrusaLinkPy.put_gcode(remotePath) 
+## PrusaLinkPy.post_gcode(remotePath) 
+
+Print a file 
+
+    import PrusaLinkPy
+    prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
+    obj = prusaMini.post_gcode('/DEBOUC~1.GCO')
+
+## PrusaLinkPy.put_gcode(remotePath, printAfterUpload = False, overwrite = False) 
 
 Send a file on USB Drive.
+
 Can create a folder !
+
 if ret.status_code = 409 -> Conflict : File already exists
+
+printAfterUpload : Set at True to print after upload. Warning : Printer LCD must be on main screen !
+
+overwrite : Allow file Overwrite
+
 
     import PrusaLinkPy
     prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
     status = prusaMini.put('C:/MTN/DEBOUCHAGE.gcode' , 'MTN/DEBOUCHAGE.gcode')
+    # Overwrite
+    status = prusaMini.put('C:/MTN/DEBOUCHAGE.gcode' , 'MTN/DEBOUCHAGE.gcode', False, True)
+    # Overwrite and Print
+    status = prusaMini.put('C:/MTN/DEBOUCHAGE.gcode' , 'MTN/DEBOUCHAGE.gcode', True, True)
     
 ## PrusaLinkPy.exists_gcode(remotePath) 
 
-Check if a file exists on USB drive. Return True or False
+Check if a file exists on USB drive. 
+
+Return True or False
 
     import PrusaLinkPy
     prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
     status = prusaMini.exists_gcode('/DEBOUC~1.GCO')
-
-## PrusaLinkPy.post_print_gcode(remotePath) 
-
-Print GCODE on USB Drive 
-
-Warning : Printer LCD must be on main screen !
-
-    import PrusaLinkPy
-    mini111 = PrusaLinkPy.PrusaLinkPy("192.168.1.211", "44Da9wHhThmzFFJ")
-    ret = mini111.post_print_gcode('/usb/DEBOUC~1.GCO')
-    
-File can be in sub folder . Add subfolder name after USB. Example :
-
-    ret = mini111.post_print_gcode('/usb/SUB_FOLDER_1/DEBOUC~1.GCO')
-
-If printer is not on main page, an error is generated by printer :
-
-    ret.text
-    "409: Conflict\n\nCan't start print now\n"
-
 
 # API
 
@@ -337,6 +396,21 @@ POST /api/job
 
 GET/POST /api/download 
 **[Link to Buddy code](https://github.com/prusa3d/Prusa-Firmware-Buddy/blob/master/lib/WUI/link_content/prusa_link_api.cpp#L289)**
+
+
+#  Bugs present in Prusa MINI printer firmware 4.4.1:
+
+ * There is no possibility to have the list of folders present in a directory
+    * Solved in firmware 5
+ * You cannot upload a gcode in a subfolder of the USB key
+    * Solved in firmware 5
+ * When the printer detects the end of the filament and it displays "Change Filament" the telemetry information is no longer good. Here is the information returned by the printer in this case:
+ 
+    'telemetry': {'temp-bed': 0.0, 'temp-nozzle': 0.0, 'print-speed': 100, 'z-height': 0.0, 'material': '---'}
+    
+ * Still in the case of a filament change, the status information is incorrect:
+
+    'state': {'text': 'Operational', 'flags': {'operational': True, 'paused': False, 'printing': False, 'cancelling': False, 'pausing': False, 'sdReady': False, 'error': False, 'closedOnError': False, 'ready': True, 'busy': False}
 
 
 # Inspiration

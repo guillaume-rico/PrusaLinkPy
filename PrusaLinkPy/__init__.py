@@ -16,17 +16,31 @@ class PrusaLinkPy:
         self.headers = {'X-Api-Key': api_key}
         
     def get_version(self) :
-        """Get the version."""
+        """
+        
+            Get the version of the printer 
+            Tested with mini and firmware 5
+        
+        """
         r = requests.get('http://' + self.host + ':' + self.port + '/api/version', headers=self.headers)
         return r
         
     def get_printer(self) :
-        """Get the printer."""
+        """
+        
+            Get the printer status
+            Tested with mini and firmware 5
+            
+        """
         r = requests.get('http://' + self.host + ':' + self.port + '/api/printer', headers=self.headers)
         return r
         
     def get_job(self) :
-        """Get the job."""
+        """
+        
+            Get the job.
+            
+        """
         r = requests.get('http://' + self.host + ':' + self.port + '/api/job', headers=self.headers)
         return r
         
@@ -62,6 +76,34 @@ class PrusaLinkPy:
         r = requests.get('http://' + self.host + ':' + self.port + '/api/v1/files/usb' + remoteDir, headers=self.headers)
         return r
         
+    def get_recursive_v1_files(self, remoteDir = '/') :
+        """
+        List files and folder on USB Drive.
+        
+        Test code :
+        import PrusaLinkPy
+        prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.1.211", "44Da9wHhThmzFFJ")
+        files = prusaMini.get_v1_files().json()
+        
+        """
+        returnDict = {}
+        
+        if remoteDir[-1] != "/" :
+            remoteDir = remoteDir + "/"
+        
+        ret = self.get_v1_files(remoteDir)
+        #print(ret.json()['children'])
+        
+        for filefolder in ret.json()['children'] :
+            #print("work on" + str(filefolder))
+            if filefolder['type'] == "FOLDER" :
+                returnDict[filefolder['display_name']] = {}
+                returnDict[filefolder['display_name']] = self.get_recursive_v1_files(remoteDir + filefolder['display_name'] )
+            elif filefolder['type'] == "PRINT_FILE" :
+                returnDict[filefolder['display_name']] = remoteDir + filefolder['name']
+        
+        return returnDict
+        
     def post_gcode(self, filePathLocal) :
         """
         Send a file on USB Drive.
@@ -74,10 +116,11 @@ class PrusaLinkPy:
         files.json()['refs']['resource']
         
         """
+        print("post_gcode is depreciated. Use put_gcode")
         fileContentBinary = {'file': open(filePathLocal,'rb')}
         # Marche aussi avec 
         #r = requests.post('http://' + self.host + ':' + self.port + '/api/files/local/', headers=self.headers, files=fileContentBinary )
-        r = requests.post('http://' + self.host + ':' + self.port + '/api/files/usb/', headers=self.headers, files=fileContentBinary )
+        r = requests.post('http://' + self.host + ':' + self.port + '/api/v1/files/usb/', headers=self.headers, files=fileContentBinary )
         return r
         
     def put_gcode(self, filePathLocal, remoteDir) :
@@ -92,13 +135,13 @@ class PrusaLinkPy:
         prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.1.211", "44Da9wHhThmzFFJ")
         files = prusaMini.put('C:/SLF/Perso/brio/_exportUSB/MTN/DEBOUCHAGE.gcode' , 'MTN/DEBOUCHAGE.gcode')
         
+        Handmade :
+        filePathLocal = 'C:/SLF/Perso/MyLittlePrusaFarm/groups/_COMMON/MTN/CHGT_BUSE.gcode'
+        r = requests.put('http://192.168.0.144/api/v1/files/usb/CHGT_BUSE.gcode' , headers=headers, data=open(filePathLocal, 'rb') )
+        
         """
-        if "bgcode" in filePathLocal :
-            fileContentBinary = {'file': open(filePathLocal,'rb')}
-        else :
-            fileContentBinary = {'file': open(filePathLocal,'r')}
-            
-        r = requests.put('http://' + self.host + ':' + self.port + '/api/v1/files/usb/' + remoteDir, headers=self.headers, data=fileContentBinary )
+        
+        r = requests.put('http://' + self.host + ':' + self.port + '/api/v1/files/usb/' + remoteDir, headers=self.headers, data=open(filePathLocal, 'rb') )
         return r
         
     def exists_gcode(self, remoteDir) :
@@ -113,8 +156,6 @@ class PrusaLinkPy:
         import PrusaLinkPy
         prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.1.211", "44Da9wHhThmzFFJ")
         fileExist = prusaMini.exists_gcode('MTN/DEBOUCHAGE.gcode')
-        
-        
         """
         r = requests.head('http://' + self.host + ':' + self.port + '/api/v1/files/usb/' + remoteDir, headers=self.headers )
         
@@ -137,18 +178,25 @@ class PrusaLinkPy:
         r = requests.post('http://' + self.host + ':' + self.port + '/api/files' + remotePath, headers=self.headers, data=json.dumps(payload))
         return r
         
-        
-    def delete_gcode(self, filePathRemote) :
+    def delete(self, filePathRemote) :
         """
             Delete gcode on USB drive
-            
+            can delete a Folder !
             Test code :
             import PrusaLinkPy
             prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.1.211", "44Da9wHhThmzFFJ")
             ret = prusaMini.delete_gcode('/usb/DEBOUC~1.GCO').json()
         """
-        r = requests.delete('http://' + self.host + ':' + self.port + '/api/files' + filePathRemote, headers=self.headers)
+        r = requests.delete('http://' + self.host + ':' + self.port + '/api/v1/files/usb' + filePathRemote, headers=self.headers)
+        
         return r
+        
+    def delete_gcode(self, filePathRemote) :
+        """
+            Compatibility only
+        """
+
+        return self.delete(,filePathRemote)
         
     def rm(self, filePathRemote = '/') :
         """
@@ -165,7 +213,7 @@ class PrusaLinkPy:
         if "{" in ret.text :
             for filejson in ret.json()['files'][0]['children'] :
                 print("Delete file : " + filejson["path"])
-                self.delete_gcode( filejson["path"])
+                self.delete( filejson["path"])
         else :
             return ret
         

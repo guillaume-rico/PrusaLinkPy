@@ -19,8 +19,8 @@ Example of use :
     # Display bed temperature
     print(getPrint.json()["telemetry"]["temp-bed"])
     
-    # Delete all files on USB drive (rootdir) :
-    prusaMini.rm()
+    # Delete a files on USB drive :
+    prusaMini.delete("/5H30M_~1.GCO")
     
     # Transferring a file to the printer
     if not prusaMini.exists_gcode('FOLDER/test.gcode') :
@@ -52,11 +52,22 @@ Prusa staff asked me to leave them the name.
  * put_gcode
  * exists_gcode
  
+2.0.1 :
+
+ - Bug correction on put_gcode
+ 
+2.0.1 :
+
+ - added :
+
+ * delete
 
 #  Bugs present in Prusa MINI printer firmware 4.4.1:
 
  * There is no possibility to have the list of folders present in a directory
+    * Solved in firmware 5
  * You cannot upload a gcode in a subfolder of the USB key
+    * Solved in firmware 5
  * When the printer detects the end of the filament and it displays "Change Filament" the telemetry information is no longer good. Here is the information returned by the printer in this case:
  
     'telemetry': {'temp-bed': 0.0, 'temp-nozzle': 0.0, 'print-speed': 100, 'z-height': 0.0, 'material': '---'}
@@ -85,9 +96,15 @@ PrusaLinkPy officially supports Python 3.9+ with Prusa MINI printer firmware 5.1
 
 [get_job()](https://github.com/guillaume-rico/PrusaLinkPy#prusalinkpyget_job---get-job-)
 
-[get_files(remoteDir)](https://github.com/guillaume-rico/PrusaLinkPy#prusalinkpyget_files-remotedir------get-files-on-usb-drive-)
+[get_v1_files(remoteDir)]()
 
-[delete_gcode(remotePath)](https://github.com/guillaume-rico/PrusaLinkPy#prusalinkpydelete_gcoderemotepath---delete-a-file-on-usb-drive)
+[get_recursive_v1_files(remoteDir)]()
+
+[delete(remotePath)]()
+
+[put_gcode(filePathLocal, remoteDir)]()
+
+[exists_gcode(remotePath)]()
 
 [post_print_gcode(remotePath)](https://github.com/guillaume-rico/PrusaLinkPy#prusalinkpypost_print_gcoderemotepath---print-gcode-on-usb-drive)
 
@@ -108,7 +125,9 @@ Function to add to the library:
 
 # User Guide
 
-## PrusaLinkPy.get_version() - Read version :
+## PrusaLinkPy.get_version()
+
+Read version :
 
 
     import PrusaLinkPy
@@ -118,10 +137,12 @@ Function to add to the library:
     
 Return something like :
 
-    {'api': '2.0.0', 'server': '2.1.2', 'text': 'PrusaLinkPy MINI', 'hostname': 'PMINI3'}
+    {'api': '2.0.0', 'server': '2.1.2', 'nozzle_diameter': 0.4, 'text': 'PrusaLink', 'hostname': '', 'capabilities': {'upload-by-put': True}}
 
 
-## PrusaLinkPy.get_printer() - Get printer :
+## PrusaLinkPy.get_printer()
+
+Get printer :
 
     import PrusaLinkPy
     prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
@@ -131,39 +152,51 @@ Return something like :
 Return something like :
 
     {'telemetry': 
-        {'temp-bed': 29.1, 
-        'temp-nozzle': 30.5, 
-        'print-speed': 100, 
-        'z-height': 120.1, 
-        'material': 'PLA'},
-     'temperature': {
-        'tool0': {
-            'actual': 30.5,
-            'target': 0.0, 
-            'display': 0.0, 
-            'offset': 0}, 
-        'bed': {
-            'actual': 29.1,
-            'target': 0.0,
-            'offset': 0}
-     },
-     'state': {
-        'text': 'Operational',
-        'flags': {
-            'operational': True, 
-            'paused': False, 
-            'printing': False, 
-            'cancelling': False, 
-            'pausing': False, 
-            'sdReady': False, 
-            'error': False, 
-            'closedOnError': False, 
-            'ready': True, 
-            'busy': False}
-        }
+        {
+            'temp-bed': 16.3,
+            'temp-nozzle': 16.7,
+            'print-speed': 100,
+            'z-height': 82.0,
+            'material': 'PLA'
+        }, 
+        'temperature': 
+            {
+                'tool0': 
+                    {
+                        'actual': 16.7,
+                        'target': 0.0,
+                        'display': 0.0,
+                        'offset': 0
+                    },
+                'bed': 
+                    {
+                        'actual':16.3,
+                        'target': 0.0,
+                        'offset': 0
+                    }
+            },
+        'state': 
+            {
+                'text': 'Operational',
+                'flags': 
+                    {
+                        'operational': True,
+                        'paused': False,
+                        'printing': False,
+                        'cancelling': False,
+                        'pausing': False,
+                        'error': False,
+                        'sdReady': False,
+                        'closedOnError': False,
+                        'ready': True,
+                        'busy': False
+                    }
+            }
     }
 
-## PrusaLinkPy.get_job() - Get job :
+## PrusaLinkPy.get_job()
+
+Get job :
 
     import PrusaLinkPy
     prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
@@ -174,94 +207,102 @@ Return something like :
 
     {
         "state":"Operational",
-        "job": null,
-        "progress": null
+        "job": None,
+        "progress": None
     }
     
     
-## PrusaLinkPy.get_files( remoteDir = '/' ) - Get Files on USB Drive :
+## PrusaLinkPy.get_v1_files( remoteDir = '/')
 
-Warning : Return onlys files ! Not folder !
+Get Files on USB Drive :
 
     import PrusaLinkPy
     prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
-    obj = prusaMini.get_files()
+    obj = prusaMini.get_v1_files()
     filesRet = obj.json()
-    filesRet
     
 Return something like :
 
     {
-        'files': 
+        'type': 'FOLDER', 
+        'ro': False, 
+        'name': 'usb', 
+        'children': 
             [
                 {
-                    'name': 'USB', 
-                    'path': '/usb',
-                    'display': 'USB', 
-                    'type': 'folder', 
-                    'origin': 'usb', 
-                    'children': 
-                        [
-                            {
-                                'name': 'DEBOUC~1.GCO',
-                                'display': 'DEBOUCHAGE.gcode',
-                                'path': '/usb/DEBOUC~1.GCO',
-                                'origin': 'usb',
-                                'refs': 
-                                    {
-                                        'resource': '/api/files/usb/DEBOUC~1.GCO', 
-                                        'thumbnailSmall': '/thumb/s/usb/DEBOUC~1.GCO', 
-                                        'thumbnailBig': '/thumb/l/usb/DEBOUC~1.GCO', 
-                                        'download': '/usb/DEBOUC~1.GCO'
-                                    }
-                            }
-                        ]
+                    'name': 'MTN', 
+                    'ro': False, 
+                    'type': 'FOLDER', 
+                    'm_timestamp': 1702628945, 
+                    'display_name': 'MTN'
+                },
+                {
+                    'name': 'S2_V2IS', 
+                    'ro': False, 
+                    'type': 'FOLDER', 
+                    'm_timestamp': 1702565182, 
+                    'display_name': 'S2_V2IS'
                 }
             ]
     }
-
-To get the list :
-
-    filesRet["files"][0]["children"]
     
 Workalso with subfolder
 
-    obj = prusaMini.get_files(remoteDir = '/USB/SUBFOLDER/')
+    obj = prusaMini.get_v1_files(remoteDir = '/SUBFOLDER')
 
-## PrusaLinkPy.delete_gcode(remotePath) - Delete a file on USB drive
+## PrusaLinkPy.get_recursive_v1_files( remoteDir = '/')
 
-    import PrusaLinkPy
-    prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
-    obj = prusaMini.delete_gcode('/usb/DEBOUC~1.GCO')
-
-Not tested in folder
-
-## Deprecated - PrusaLinkPy.post_gcode(filePathLocal) - Send GCODE 
+Get all files in a folder and subfolder.
+Warning : return nested dict.
 
     import PrusaLinkPy
     prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
-    obj = prusaMini.post_gcode('C:\test.gcode')
-    obj.json()
+    dictt = prusaMini.get_recursive_v1_files()
     
-Return something like :
-
     {
-        "name":"DEBOUCHAGE.gcode",
-        "origin":"local",
-        "size":821,
-        "refs":
-            {
-            "resource":"/api/files/usb/DEBOUCHAGE.gcode",
-            "thumbnailSmall":"/thumb/s/usb/DEBOUCHAGE.gcode",
-            "thumbnailBig":"/thumb/l/usb/DEBOUCHAGE.gcode",
-            "download":"/usb/DEBOUCHAGE.gcode"
+        'MTN': 
+        {
+            'CHGT_BUSE.gcode': '/MTN/CHGT_B~1.GCO', 
+            'DEBOUCHAGE.gcode': '/MTN/DEBOUC~1.GCO', 
+            'PRECHAUFFE.gcode': '/MTN/PRECHA~1.GCO'
+        }, 
+        'S2_V2IS': 
+        {
+            '2h33m.bgcode': '/S2_V2IS/2H33M~1.BGC',
+            '5h5m.bgcode': '/S2_V2IS/5H5M~1.BGC'
         }
     }
 
-Speed transfer (By Ethernet) :
-83s for 4.5Mo -> 54ko/s 
+## PrusaLinkPy.delete(remotePath) 
 
-## PrusaLinkPy.post_print_gcode(remotePath) - Print GCODE on USB Drive 
+Delete a file or a folder on USB drive
+
+    import PrusaLinkPy
+    prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
+    obj = prusaMini.delete('/DEBOUC~1.GCO')
+
+
+## PrusaLinkPy.put_gcode(remotePath) 
+
+Send a file on USB Drive.
+Can create a folder !
+if ret.status_code = 409 -> Conflict : File already exists
+
+    import PrusaLinkPy
+    prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
+    status = prusaMini.put('C:/MTN/DEBOUCHAGE.gcode' , 'MTN/DEBOUCHAGE.gcode')
+    
+## PrusaLinkPy.exists_gcode(remotePath) 
+
+Check if a file exists on USB drive. Return True or False
+
+    import PrusaLinkPy
+    prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
+    status = prusaMini.exists_gcode('/DEBOUC~1.GCO')
+
+## PrusaLinkPy.post_print_gcode(remotePath) 
+
+Print GCODE on USB Drive 
 
 Warning : Printer LCD must be on main screen !
 
@@ -283,8 +324,6 @@ If printer is not on main page, an error is generated by printer :
 
 API not implemented in my lib  : 
 
-    r = requests.get('http://192.168.0.123:8017/api/files/usb/TAVERN~1.GCO', headers=headers)
-
 retrieve thumbnail 
 
     r = requests.get('http://192.168.0.123:8017/thumb/l/usb/TAVERN~1.GCO', headers=headers)
@@ -298,7 +337,6 @@ POST /api/job
 
 GET/POST /api/download 
 **[Link to Buddy code](https://github.com/prusa3d/Prusa-Firmware-Buddy/blob/master/lib/WUI/link_content/prusa_link_api.cpp#L289)**
-
 
 
 # Inspiration

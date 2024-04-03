@@ -38,6 +38,14 @@ Prusa staff asked me to leave them the name.
 
 # Change Log 
 
+## 2.1.1 :
+
+ - Update README.md
+ - added :
+
+ * get_transfer
+ * get_settings
+ 
 ## 2.1.0 :
 
  - Update README.md
@@ -94,11 +102,9 @@ PrusaLinkPy officially supports Python 3.9+ with Prusa MINI printer firmware 5.1
 
 [delete(remotePath)](#prusalinkpydeleteremotepath)
 
-[post_gcode(filePathLocal, remoteDir)](#prusalinkpyput_post_gcode)
+[post_gcode(remotePath)](#prusalinkpyput_post_gcode)
 
 [put_gcode(filePathLocal, remoteDir, printAfterUpload = False, overwrite = False)](#prusalinkpyput_gcoderemotepath)
-
-[post_gcode(filePathLocal, remoteDir)](#prusalinkpyput_post_gcode)
 
 [exists_gcode(remotePath)](#prusalinkpyexists_gcoderemotepath)
 
@@ -142,6 +148,11 @@ Get printer :
     prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
     obj = prusaMini.get_printer()
     obj.json()
+    
+Waiting for Changing Filament :
+
+    'link_state': 'ATTENTION' 
+    'error': True
     
 Return something like :
 
@@ -224,6 +235,15 @@ Get job :
     obj = prusaMini.get_status()
     obj.json()
     
+Value of printer->state :
+
+    IDLE (Main Screen)
+    PRINTING
+    FINISHED (Print finish, screen not on main screen)
+    PAUSED (Pause by user, Print fan error)
+    STOPPED (Print finish, stopped by user)
+    ATTENTION (Filament Change)
+    
 Return something like :
 
     {
@@ -266,8 +286,57 @@ Get job :
     
 Return something like :
 
-    TODO
+    {
+        'storage_list': 
+        [
+            {
+                'path': '/usb/', 
+                'name': 'usb',
+                'type': 'USB', 
+                'read_only': False, 
+                'available': True
+            }
+        ]
+    }
+    
+## PrusaLinkPy.get_transfer()
 
+Not Tested
+
+Get job :
+
+    import PrusaLinkPy
+    prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
+    obj = prusaMini.get_transfer()
+    obj.text
+    
+Return something like :
+
+    TODO
+    
+## PrusaLinkPy.get_settings()
+
+Completely useless
+
+See here :
+
+https://github.com/prusa3d/Prusa-Firmware-Buddy/blob/4bea923810302d654b932291ba324eaedff072fc/lib/WUI/link_content/prusa_link_api.cpp#L181C16-L181C16
+
+Comment from Prusa Developper :
+
+     // Some stubs for now, to make more clients (including the web page) happier.
+
+Get job :
+
+    import PrusaLinkPy
+    prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
+    obj = prusaMini.get_transfer()
+    obj.text
+    
+Return something like :
+
+    {"printer": {}}
+    
 ## PrusaLinkPy.get_files( remoteDir = '/')
 
 Get Files on USB Drive :
@@ -308,7 +377,7 @@ Workalso with subfolder
 
 ## PrusaLinkPy.get_recursive_files( remoteDir = '/')
 
-Get all files in a folder and subfolder.
+Get all files (only gcode and bgcode) in a folder and subfolder.
 
 Warning : return nested dict.
 
@@ -342,7 +411,7 @@ Delete a file or a folder on USB drive
 
 ## PrusaLinkPy.post_gcode(remotePath) 
 
-Print a file 
+Print a file already poresent on USB key 
 
     import PrusaLinkPy
     prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
@@ -355,11 +424,17 @@ Send a file on USB Drive.
 Can create a folder !
 
 if ret.status_code = 409 -> Conflict : File already exists
+if ret.status_code = 415 -> {"title": "415: Unsupported Media Type","message":"Not a GCODE"}
 
-printAfterUpload : Set at True to print after upload. Warning : Printer LCD must be on main screen !
+printAfterUpload : Set at True to print after upload. 
 
 overwrite : Allow file Overwrite
 
+FW 5.1.0 :
+
+ * Warning: printing starts even if the bed is not empty
+ * Can only send bgcode and gcode
+    
 
     import PrusaLinkPy
     prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
@@ -383,10 +458,9 @@ Return True or False
 
 API not implemented in my lib  : 
 
-retrieve thumbnail 
+ * retrieve thumbnail :
 
     r = requests.get('http://192.168.0.123:8017/thumb/l/usb/TAVERN~1.GCO', headers=headers)
-
 
 /api/settings
 

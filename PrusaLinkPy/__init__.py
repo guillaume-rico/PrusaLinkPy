@@ -65,12 +65,30 @@ class PrusaLinkPy:
     def get_storage(self) :
         """
         
-            Get the get_storage.
+            Get the storage.
             
         """
         r = requests.get('http://' + self.host + ':' + self.port + '/api/v1/storage', headers=self.headers)
         return r
 
+    def get_transfer(self) :
+        """
+        
+            Get the transfer
+            
+        """
+        r = requests.get('http://' + self.host + ':' + self.port + '/api/v1/transfer', headers=self.headers)
+        return r
+        
+    def get_settings(self) :
+        """
+        
+            Get the settings
+            
+        """
+        r = requests.get('http://' + self.host + ':' + self.port + '/api/settings', headers=self.headers)
+        return r
+        
     def get_files(self, remoteDir = '/') :
         """
         List files and folder on USB Drive.

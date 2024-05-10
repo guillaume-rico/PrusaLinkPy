@@ -264,7 +264,7 @@ class PrusaLinkPy:
 		# Check if response is json
 		if "{" in job_info.text :
 			if "id" in job_info.json():
-				id = str(job_info['id'])
+				id = str(job_info.json()['id'])
 				r = requests.put('http://' + self.host + ':' + self.port + '/api/v1/job/'+ id + '/pause', headers=self.headers)
 		return r
 
@@ -280,7 +280,7 @@ class PrusaLinkPy:
 		# Check if response is json 
 		if "{" in job_info.text :
 			if "id" in job_info.json():
-				id = str(job_info['id'])
+				id = str(job_info.json()['id'])
 				r = requests.put('http://' + self.host + ':' + self.port + '/api/v1/job/'+ id + '/resume', headers=self.headers)
 		return r
 	
@@ -296,7 +296,7 @@ class PrusaLinkPy:
 		# Check if response is json 
 		if "{" in job_info.text :
 			if "id" in job_info.json():
-				id = str(job_info['id'])
+				id = str(job_info.json()['id'])
 				r = requests.delete('http://' + self.host + ':' + self.port + '/api/v1/job/'+ str(id), headers=self.headers)
 		return r
         

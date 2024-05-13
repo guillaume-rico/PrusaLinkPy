@@ -44,10 +44,9 @@ Prusa staff asked me to leave them the name.
  - Update README.md
  - Modified delete_job() to fix request from get to delete
  - added :
-
- * pause_print
- * resume_print
- * stop_print
+   - [pause_print()](#prusalinkpypause_print)
+   - [resume_print()](#prusalinkpyresume_print)
+   - [stop_print()](#prusalinkpystop_print)
 
 ## 2.1.1 :
 

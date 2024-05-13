@@ -38,6 +38,17 @@ Prusa staff asked me to leave them the name.
 
 # Change Log 
 
+## 2.2 :
+
+  Version made by [enrgarci](https://github.com/enrgarci)
+ - Update README.md
+ - Modified delete_job() to fix request from get to delete
+ - added :
+
+ * pause_print
+ * resume_print
+ * stop_print
+
 ## 2.1.1 :
 
  - Update README.md
@@ -107,6 +118,12 @@ PrusaLinkPy officially supports Python 3.9+ with Prusa MINI printer firmware 5.1
 [put_gcode(filePathLocal, remoteDir, printAfterUpload = False, overwrite = False)](#prusalinkpyput_gcoderemotepath)
 
 [exists_gcode(remotePath)](#prusalinkpyexists_gcoderemotepath)
+
+[pause_print()](#prusalinkpypause_print)
+
+[resume_print()](#prusalinkpyresume_print)
+
+[stop_print()](#prusalinkpystop_print)
 
 ## High Level Functions 
 
@@ -453,6 +470,24 @@ Return True or False
     import PrusaLinkPy
     prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
     status = prusaMini.exists_gcode('/DEBOUC~1.GCO')
+
+## PrusaLinkPy.pause_print() 
+
+Pause actual print.
+
+Added in 2.2.0 .
+
+## PrusaLinkPy.resume_print() 
+
+Resume paused print.
+
+Added in 2.2.0 .
+
+## PrusaLinkPy.stop_print() 
+
+Stop actual print.
+
+Added in 2.2.0 .
 
 # API
 

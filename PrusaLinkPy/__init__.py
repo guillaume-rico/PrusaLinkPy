@@ -252,55 +252,54 @@ class PrusaLinkPy:
         else :
             return ret
 
-	def pause_print(self) :
-		"""
-		
-			Pause job.
-			None if no active job.
-			
-		"""
-		r = None
-		job_info = self.get_job()
-		# Check if response is json
-		if "{" in job_info.text :
-			if "id" in job_info.json():
-				id = str(job_info.json()['id'])
-				r = requests.put('http://' + self.host + ':' + self.port + '/api/v1/job/'+ id + '/pause', headers=self.headers)
-		return r
+    def pause_print(self) :
+        """
+        
+            Pause job.
+            None if no active job.
+            
+        """
+        r = None
+        job_info = self.get_job()
+        # Check if response is json
+        if "{" in job_info.text :
+            if "id" in job_info.json():
+                id = str(job_info.json()['id'])
+                r = requests.put('http://' + self.host + ':' + self.port + '/api/v1/job/'+ id + '/pause', headers=self.headers)
+        return r
 
-	def resume_print(self) :
-		"""
-		
-			Resume current job.
-			None if no active job.
-			
-		"""
-		r = None
-		job_info = self.get_job()
-		# Check if response is json 
-		if "{" in job_info.text :
-			if "id" in job_info.json():
-				id = str(job_info.json()['id'])
-				r = requests.put('http://' + self.host + ':' + self.port + '/api/v1/job/'+ id + '/resume', headers=self.headers)
-		return r
-	
-	def stop_print(self) :
-		"""
-		
-			Stop current job.
-			None if no active job
-			
-		"""
-		r = None
-		job_info = self.get_job()
-		# Check if response is json 
-		if "{" in job_info.text :
-			if "id" in job_info.json():
-				id = str(job_info.json()['id'])
-				r = requests.delete('http://' + self.host + ':' + self.port + '/api/v1/job/'+ str(id), headers=self.headers)
-		return r
+    def resume_print(self) :
+        """
         
+            Resume current job.
+            None if no active job.
+            
+        """
+        r = None
+        job_info = self.get_job()
+        # Check if response is json 
+        if "{" in job_info.text :
+            if "id" in job_info.json():
+                id = str(job_info.json()['id'])
+                r = requests.put('http://' + self.host + ':' + self.port + '/api/v1/job/'+ id + '/resume', headers=self.headers)
+        return r
+    
+    def stop_print(self) :
+        """
         
+            Stop current job.
+            None if no active job
+            
+        """
+        r = None
+        job_info = self.get_job()
+        # Check if response is json 
+        if "{" in job_info.text :
+            if "id" in job_info.json():
+                id = str(job_info.json()['id'])
+                r = requests.delete('http://' + self.host + ':' + self.port + '/api/v1/job/'+ str(id), headers=self.headers)
+        return r
+
 # Utilisation :
 # import PrusaLinkPy
 # prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM", port=8017)

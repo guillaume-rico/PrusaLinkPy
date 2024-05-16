@@ -3,13 +3,10 @@ PrusaLinkPy is a library to use the Prusa Link API.
 
 The library makes it easy to use the prusa API in python. The library is based on Request.
 
-Installation :
+Installation, update :
 
-    pip install PyPrusaLink
-    
-Update :
-
-    pip install PyPrusaLink -U
+    pip install prusaLinkPy
+    pip install prusaLinkPy -U
 
 Example of use :
 

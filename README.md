@@ -3,6 +3,14 @@ PrusaLinkPy is a library to use the Prusa Link API.
 
 The library makes it easy to use the prusa API in python. The library is based on Request.
 
+Installation :
+
+    pip install PyPrusaLink
+    
+Update :
+
+    pip install PyPrusaLink -U
+
 Example of use :
 
     # Library import
@@ -38,11 +46,15 @@ Prusa staff asked me to leave them the name.
 
 # Change Log 
 
+## 2.2.1 :
+
+Tab correction
+
 ## 2.2 :
 
   Version made by [enrgarci](https://github.com/enrgarci)
  - Update README.md
- - Modified delete_job() to fix request from get to delete
+ - Modified [delete_job()](#prusalinkpydelete_job) to fix request from get to delete
  - added :
    - [pause_print()](#prusalinkpypause_print)
    - [resume_print()](#prusalinkpyresume_print)
@@ -52,32 +64,29 @@ Prusa staff asked me to leave them the name.
 
  - Update README.md
  - added :
-
- * get_transfer
- * get_settings
+   - get_transfer
+   - get_settings
  
 ## 2.1.0 :
 
  - Update README.md
  - added :
-
- * delete
- * get_status
- * get_storage
- * delete_job
+   - delete
+   - [get_status()](#prusalinkpyget_status)
+   - [get_storage()](#prusalinkpyget_storage)
+   - [delete_job()](#prusalinkpydelete_job)
  
 ## 2.0.1 :
 
- - Bug correction on put_gcode
+ - Bug correction on [put_gcode(filePathLocal, remoteDir, printAfterUpload = False, overwrite = False)](#prusalinkpyput_gcoderemotepath-printafterupload--false-overwrite--false)
  
 ## 2.0.0 :
 
  - Support firmware 5.1.0
  - Added : 
-
- * get_files
- * put_gcode
- * exists_gcode
+   - [get_files(remoteDir)](#prusalinkpyget_files-remotedir--)
+   - [put_gcode(filePathLocal, remoteDir, printAfterUpload = False, overwrite = False)](#prusalinkpyput_gcoderemotepath-printafterupload--false-overwrite--false)
+   - [exists_gcode(remotePath)](#prusalinkpyexists_gcoderemotepath)
  
 ## 1.0.0 :
 
@@ -89,7 +98,7 @@ PrusaLinkPy is available on pip :
 
     python -m pip install PrusaLinkPy
 
-PrusaLinkPy officially supports Python 3.9+ with Prusa MINI printer firmware 5.1.0.
+PrusaLinkPy officially supports Python 3.9+ with Prusa printers (MINI, MK4 or XL) firmware 5.1.0.
 
 
 # API Reference
@@ -102,8 +111,6 @@ PrusaLinkPy officially supports Python 3.9+ with Prusa MINI printer firmware 5.1
 
 [get_job()](#prusalinkpyget_job)
 
-[delete_job()](#prusalinkpydelete_job)
-
 [get_status()](#prusalinkpyget_status)
 
 [get_storage()](#prusalinkpyget_storage)
@@ -114,7 +121,7 @@ PrusaLinkPy officially supports Python 3.9+ with Prusa MINI printer firmware 5.1
 
 [post_gcode(remotePath)](#prusalinkpyput_post_gcode)
 
-[put_gcode(filePathLocal, remoteDir, printAfterUpload = False, overwrite = False)](#prusalinkpyput_gcoderemotepath)
+[put_gcode(filePathLocal, remoteDir, printAfterUpload = False, overwrite = False)](#prusalinkpyput_gcoderemotepath-printafterupload--false-overwrite--false)
 
 [exists_gcode(remotePath)](#prusalinkpyexists_gcoderemotepath)
 
@@ -123,6 +130,14 @@ PrusaLinkPy officially supports Python 3.9+ with Prusa MINI printer firmware 5.1
 [resume_print()](#prusalinkpyresume_print)
 
 [stop_print()](#prusalinkpystop_print)
+
+Not documented :
+ * get_transfer
+ * get_settings
+
+For compatibility with old versions :
+
+[delete_job()](#prusalinkpydelete_job)
 
 ## High Level Functions 
 

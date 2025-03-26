@@ -16,6 +16,7 @@ Example of use :
     # Printer instantiation
     # IP : 192.168.0.123
     # API KEY : 8ojHKHGNuAHA2bM
+    # The API key is the same as the printer password.
     prusaMini = PrusaLinkPy.PrusaLinkPy("192.168.0.123", "8ojHKHGNuAHA2bM")
     
     # Get bed temperature
